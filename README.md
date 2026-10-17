@@ -15,8 +15,8 @@ and table rebuilt automatically.
 
 ## Installation
 
-- **Marketplace:** search for **GCL** in the Extensions view (`Ctrl+Shift+X`), or run
-  `ext install zoft123.gcl`.
+- **Marketplace:** search for **Metal Gear GCL** in the Extensions view (`Ctrl+Shift+X`), or run
+  `ext install zoft123.metal-gear-gcl`.
 - **From a `.vsix`:** download it from the [Releases](https://github.com/Zoft123/gcl-vscode/releases) page, then
   *Extensions view → … → Install from VSIX…*.
 
