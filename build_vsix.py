@@ -8,7 +8,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 pkg = json.load(open(os.path.join(HERE, 'package.json')))
 FILES = ['package.json', 'icon.png', 'extension.js', 'README.md', 'CHANGELOG.md', 'LICENSE', 'language-configuration.json',
          'syntaxes/gcl.tmLanguage.json', 'snippets/gcl.json', 'bin/gcx.js',
-         'lib/gcx.js', 'lib/gcltext.js', 'lib/project.js', 'lib/mgo2crypt.js']
+         'lib/gcx.js', 'lib/gcltext.js', 'lib/project.js', 'lib/mgo2crypt.js',
+         'data/dictionary.txt', 'data/commands.txt']
 
 manifest = f'''<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
@@ -56,6 +57,7 @@ types = '''<?xml version="1.0" encoding="utf-8"?>
   <Default Extension=".md" ContentType="text/markdown"/>
   <Default Extension=".vsixmanifest" ContentType="text/xml"/>
   <Default Extension=".png" ContentType="image/png"/>
+  <Default Extension=".txt" ContentType="text/plain"/>
   <Override PartName="/extension/LICENSE" ContentType="text/plain"/>
 </Types>
 '''

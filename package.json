@@ -112,12 +112,12 @@
         "gcl.dictionaryPath": {
           "type": "string",
           "default": "",
-          "description": "dictionary.txt for readable names of hashes. Empty: look for dictionary.txt in the project folder and up to 4 folders above it, then in the workspace folders."
+          "description": "Your own dictionary.txt for readable names of hashes. Empty: a dictionary.txt next to the project or up to 4 folders above it, then in the workspace folders, else the one bundled with the extension."
         },
         "gcl.commandsPath": {
           "type": "string",
           "default": "",
-          "description": "commands.txt (0xHASH -> Name) for command labels shown as [hash/Name]. Empty: searched like the dictionary."
+          "description": "Your own commands.txt (0xHASH -> Name) for command labels shown as [hash/Name]. Empty: searched like the dictionary, else the bundled one."
         },
         "gcl.mgo2Key": {
           "type": "string",

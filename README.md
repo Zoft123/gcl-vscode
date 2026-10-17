@@ -20,7 +20,8 @@ and table rebuilt automatically.
 - **From a `.vsix`:** download it from the [Releases](https://github.com/Zoft123/gcl-vscode/releases) page, then
   *Extensions view → … → Install from VSIX…*.
 
-No other software is needed: the decompiler and compiler are part of the extension.
+No other software is needed: the decompiler, the compiler and the name lists for hashes are all part of the
+extension.
 
 ## Quick start
 
@@ -67,6 +68,18 @@ be stored, variable layout (type, region, offset, bit), and what each `%(…)` e
 ### Navigation
 Go to definition and find references for procs (`@procN`, `p:procN`) and resources (`$res:N` jumps into
 `resources.gcl`); an outline of all procs with the first statement of each.
+
+### Names for hashes
+GCL refers to commands, actor types, options and many values by 24-bit hashes. The extension ships with two
+community name lists, so scripts read well from the first decompile:
+
+- **`data/dictionary.txt`** — about 42,000 known strings. A hash is shown as a word (`chara`, `-wp_id`,
+  `Rule_TDM`) only when that word really hashes to the stored value.
+- **`data/commands.txt`** — handler names for about 270 command hashes, shown as labels: `[f576c7/COM_svGetRule]`.
+
+To use newer or extended lists, put your own `dictionary.txt` / `commands.txt` next to the project (or up to four
+folders above it), or set `gcl.dictionaryPath` / `gcl.commandsPath`. Names only change how hashes are displayed:
+the compiled bytes never depend on them.
 
 ### Commands
 | Command | Where |
@@ -135,16 +148,14 @@ values). Add new resources at the end with the next index and refer to them as `
 
 | Setting | Default | Description |
 |---|---|---|
-| `gcl.dictionaryPath` | *(search)* | `dictionary.txt` with names for hashes. Empty: looked for next to the project and up to four folders above it, then in the workspace folders |
-| `gcl.commandsPath` | *(search)* | `commands.txt` (`0xHASH -> Name`) with handler labels |
+| `gcl.dictionaryPath` | *(bundled)* | your own `dictionary.txt`. Empty: one next to the project or up to four folders above it, then in the workspace folders, else the bundled list |
+| `gcl.commandsPath` | *(bundled)* | your own `commands.txt` (`0xHASH -> Name`), searched the same way |
 | `gcl.mgo2Key` | | MGO2 key (e.g. `stage/n001a`) for encrypted files whose path has no `stage/<name>` folder |
 | `gcl.lint.labelNames` | `warning` | severity of the "name hashes to something else" check |
 | `gcl.lint.unknownCommands` | `information` | severity of the unknown typed command check |
 | `gcl.lint.unknownOptions` | `information` | severity of the unknown typed option check |
 | `gcl.compile.output` | `ask` | `ask` for a destination each time, or `nextToProject` to write `<folder>.gcx` |
 
-Names only change how hashes are displayed; the compiled bytes never depend on them. The extension ships without a
-dictionary — point it at the community `dictionary.txt` / `commands.txt` you use with other GCX tools.
 
 ## Command line
 
@@ -157,7 +168,8 @@ node bin/gcx.js compile scenerio/ [out.gcx]
 node bin/gcx.js verify a.gcx b.gcx …      # byte-exact round-trip check
 ```
 
-Options: `--dict FILE`, `--labels FILE`, `--key stage/NAME`, `--no-encrypt`.
+Options: `--dict FILE`, `--labels FILE`, `--key stage/NAME`, `--no-encrypt`. Without `--dict` / `--labels` the
+tool uses a `dictionary.txt` / `commands.txt` near the input file, else the bundled lists in `data/`.
 
 ## How it works
 
@@ -176,6 +188,7 @@ lib/gcltext.js          GCL text: decompiler (emitter), parser and compiler
 lib/project.js          project folders, names, MGO2 decryption
 lib/mgo2crypt.js        MGO2 stage-file encryption
 bin/gcx.js              command-line tool
+data/                   bundled name lists: dictionary.txt, commands.txt
 syntaxes/, snippets/    grammar and snippets
 test/                   provider tests against a mock of the VS Code API
 build_vsix.py           packages the extension as a .vsix
@@ -200,6 +213,8 @@ Issues and pull requests are welcome.
 ## Credits
 
 - Format knowledge from the games' own GCL interpreter and the MGS2 `gclconv` sources.
+- `dictionary.txt` and `commands.txt` are community name lists that started with Jayveer's
+  [Gcx](https://github.com/Jayveer/Gcx) decompiler (MIT) and have been extended since.
 - MGO2 decryption follows the method implemented by **HavenStudio2** of the MGO2 revival community (shared with
   [LA2 Studio](https://github.com/Zoft123/LA2_Studio)).
 
@@ -207,7 +222,8 @@ Issues and pull requests are welcome.
 
 This is an unofficial fan-made tool. It is not affiliated with, endorsed by or connected to Konami or Kojima
 Productions. *Metal Gear*, *Metal Gear Solid*, *Metal Gear Online* and *Metal Gear Arcade* are trademarks of their
-respective owners. The extension contains no game files or game data; you need your own copies of the games' files.
+respective owners. The extension contains no game files: you need your own copies of the games' files. The bundled
+name lists only map hashes to readable names.
 
 ## License
 

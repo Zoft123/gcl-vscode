@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 const P = require('../lib/project');
 
-// dictionary.txt / commands.txt: next to the input or up to four folders above it, then the current folder
+// dictionary.txt / commands.txt: next to the input or up to four folders above it, the current folder, then data/
 function findDefault(name, start) {
   let dir = start ? path.resolve(start) : null;
   if (dir && fs.existsSync(dir) && !fs.statSync(dir).isDirectory()) dir = path.dirname(dir);
@@ -20,8 +20,11 @@ function findDefault(name, start) {
     if (fs.existsSync(p)) return p;
     const up = path.dirname(dir); if (up === dir) break; dir = up;
   }
-  const p = path.join(process.cwd(), name);
-  return fs.existsSync(p) ? p : null;
+  for (const d of [process.cwd(), path.join(__dirname, '..', 'data')]) {     // then the bundled copy
+    const p = path.join(d, name);
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
 }
 
 function main(argv) {

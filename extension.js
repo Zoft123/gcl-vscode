@@ -34,7 +34,8 @@ function resolveFile(setting, file, docDir) {
     const p = path.join(f.uri.fsPath, file);
     if (fs.existsSync(p)) return p;
   }
-  return null;
+  const bundled = path.join(__dirname, 'data', file);          // shipped with the extension
+  return fs.existsSync(bundled) ? bundled : null;
 }
 
 function namesFor(docDir) {
