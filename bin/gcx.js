@@ -7,6 +7,8 @@
 //   gcx compile projdir [out.gcx]        compile (re-encrypted when the project came from an encrypted MGO2 file)
 //   gcx verify a.gcx [b.gcx ...]         decompile + compile in memory and compare bytes
 // Options: --dict FILE, --labels FILE (commands.txt), --key stage/NAME (MGO2), --no-encrypt
+// Inside a known MGS4 / MGO disc or PSN title folder, the disc ID decides encryption (USRDIR/o always encrypted;
+// USRDIR/mgs encrypted on NPEB02182 / NPJB00698 / NPUB31633, plain on the Blu-ray discs).
 const fs = require('fs');
 const path = require('path');
 const P = require('../lib/project');
@@ -54,7 +56,7 @@ function main(argv) {
   if (mode === 'compile') {
     const [dir, out] = args;
     const dest = out || path.join(path.dirname(path.resolve(dir)), path.basename(path.resolve(dir)) + '.gcx');
-    const r = P.compileFolder(dir, names, opts);
+    const r = P.compileFolder(dir, names, Object.assign({}, opts, { dest }));
     fs.writeFileSync(dest, r.bytes);
     console.log('wrote ' + dest + ' (' + r.bytes.length + ' bytes' + (r.key ? ', encrypted with ' + r.key : '') + ')');
     return 0;

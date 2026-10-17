@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- Encryption follows the disc / PSN title ID in the path: `USRDIR/o` (MGO2) is always encrypted, `USRDIR/mgs`
+  (MGS4) is encrypted on the PSN releases (NPUB31633, NPEB02182, NPJB00698) and plain on the Blu-ray discs. The
+  compile destination is checked the same way.
+
 ## 0.1.0
 
 First release.

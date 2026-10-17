@@ -32,8 +32,17 @@ extension.
 3. Press the **Compile** button in the editor title bar (or right-click the folder → **Compile GCL project to GCX**)
    and choose where to write the `.gcx`.
 
-Metal Gear Online 2 stage files are encrypted. They are decrypted automatically when you decompile them (the key is
-the `stage/<name>` folder in the file's path) and re-encrypted when you compile.
+Encrypted files are decrypted automatically when you decompile them (the key is the `stage/<name>` folder in the
+file's path) and re-encrypted when you compile. When the path contains a disc or PSN title ID, that decides it:
+
+| Title IDs | `USRDIR/mgs` (MGS4) | `USRDIR/o` (MGO2) |
+|---|---|---|
+| BLUS30109, BLES00246, BLJM67001, BLJM67002, BLJM67003, BLJM57001, BLUS30148, BLAS55004, BLAS55005, BLKS25002 | plain | encrypted |
+| NPUB31633, NPEB02182, NPJB00698 (PSN releases) | encrypted | encrypted |
+| BLJM60082 (standalone MGO disc) | — | encrypted |
+
+The output folder counts too: compiling into a `USRDIR/o` folder always encrypts, compiling into a Blu-ray
+`USRDIR/mgs` folder never does.
 
 ## Features
 

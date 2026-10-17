@@ -557,8 +557,9 @@ async function cmdCompile(uri) {
   if (!dir || !fs.existsSync(path.join(dir, 'script.gcl'))) { vscode.window.showErrorMessage('No script.gcl in ' + (dir || 'the current folder') + '.'); return; }
   for (const d of vscode.workspace.textDocuments) if (d.isDirty && path.dirname(d.uri.fsPath) === dir) await d.save();
   const N = namesFor(dir);
+  const def = path.join(path.dirname(dir), path.basename(dir) + '.gcx');
   let r;
-  try { r = P.compileFolder(dir, N.names, {}); }
+  try { r = P.compileFolder(dir, N.names, { dest: def }); }
   catch (e) {
     const where = e.line ? ' (line ' + e.line + ')' : '';
     const file = /^resources line/.test(e.message) ? 'resources.gcl' : 'script.gcl';
@@ -573,12 +574,16 @@ async function cmdCompile(uri) {
     return;
   }
   const cfg = vscode.workspace.getConfiguration('gcl').get('compile.output');
-  const def = path.join(path.dirname(dir), path.basename(dir) + '.gcx');
   let dest = def;
   if (cfg === 'ask') {
     const memo = ctxState.get('gcl.out:' + dir);
     const s = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file(memo || def), filters: { 'GCX scripts': ['gcx'] }, title: 'Write compiled GCX' });
     if (!s) return; dest = s.fsPath; ctxState.update('gcl.out:' + dir, dest);
+    // encryption follows the chosen destination's disc folder (see mgo2crypt.discEncryption)
+    if (dest !== def) {
+      try { r = P.compileFolder(dir, N.names, { dest }); }
+      catch (e) { log('compile failed: ' + e.message); vscode.window.showErrorMessage('Compile failed: ' + e.message); return; }
+    }
   }
   fs.writeFileSync(dest, r.bytes);
   log('compiled ' + dir + ' -> ' + dest + ' (' + r.bytes.length + ' bytes' + (r.key ? ', encrypted with ' + r.key : '') + ')');
