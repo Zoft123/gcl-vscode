@@ -1,0 +1,185 @@
+{
+  "name": "gcl",
+  "displayName": "GCL \u2014 Metal Gear GCX scripts",
+  "description": "Decompile, edit and compile GCX scripts (scenerio.gcx) of MGS4, Metal Gear Online 2 and Metal Gear Arcade: highlighting, autocomplete, linting, hovers, go to definition, byte-exact round trip.",
+  "version": "0.1.0",
+  "publisher": "zoft123",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Snippets"
+  ],
+  "keywords": [
+    "gcl",
+    "gcx",
+    "metal gear",
+    "mgs4",
+    "mgo2",
+    "scenerio"
+  ],
+  "main": "./extension.js",
+  "bin": {
+    "gcx": "./bin/gcx.js"
+  },
+  "activationEvents": [
+    "onLanguage:gcl",
+    "onCommand:gcl.decompile",
+    "onCommand:gcl.compile",
+    "onCommand:gcl.verify"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "gcl",
+        "aliases": [
+          "GCL",
+          "gcl"
+        ],
+        "extensions": [
+          ".gcl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "gcl",
+        "scopeName": "source.gcl",
+        "path": "./syntaxes/gcl.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "gcl",
+        "path": "./snippets/gcl.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "gcl.decompile",
+        "title": "Decompile GCX to GCL project",
+        "category": "GCL"
+      },
+      {
+        "command": "gcl.compile",
+        "title": "Compile GCL project to GCX",
+        "category": "GCL"
+      },
+      {
+        "command": "gcl.verify",
+        "title": "Verify GCX round trip (decompile + compile, compare bytes)",
+        "category": "GCL"
+      },
+      {
+        "command": "gcl.reloadNames",
+        "title": "Reload dictionary and command names",
+        "category": "GCL"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "gcl.decompile",
+          "when": "resourceExtname == .gcx",
+          "group": "navigation@90"
+        },
+        {
+          "command": "gcl.verify",
+          "when": "resourceExtname == .gcx",
+          "group": "navigation@91"
+        },
+        {
+          "command": "gcl.compile",
+          "when": "resourceFilename == script.gcl || explorerResourceIsFolder",
+          "group": "navigation@92"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "gcl.compile",
+          "when": "resourceLangId == gcl",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "GCL",
+      "properties": {
+        "gcl.dictionaryPath": {
+          "type": "string",
+          "default": "",
+          "description": "dictionary.txt for readable names of hashes. Empty: look for dictionary.txt in the project folder and up to 4 folders above it, then in the workspace folders."
+        },
+        "gcl.commandsPath": {
+          "type": "string",
+          "default": "",
+          "description": "commands.txt (0xHASH -> Name) for command labels shown as [hash/Name]. Empty: searched like the dictionary."
+        },
+        "gcl.mgo2Key": {
+          "type": "string",
+          "default": "",
+          "description": "MGO2 encryption key (e.g. stage/n001a) for encrypted .gcx files whose path has no stage/<name> folder."
+        },
+        "gcl.lint.labelNames": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "off"
+          ],
+          "default": "warning",
+          "description": "A typed name (not a dictionary word) that equals a commands.txt label but hashes to something else (NewSky is [ce2d24], but the word NewSky hashes to 8cda7b)."
+        },
+        "gcl.lint.unknownCommands": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "off"
+          ],
+          "default": "information",
+          "description": "A typed command name (not a dictionary word or [hash]) that is not in commands.txt and is used nowhere else in the script."
+        },
+        "gcl.lint.unknownOptions": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "off"
+          ],
+          "default": "information",
+          "description": "A typed option name (not a dictionary word) that is used nowhere else in the script (usually a typo)."
+        },
+        "gcl.compile.output": {
+          "type": "string",
+          "enum": [
+            "ask",
+            "nextToProject"
+          ],
+          "default": "ask",
+          "description": "Where Compile writes the .gcx: ask every time, or <project folder>.gcx next to the project folder."
+        }
+      }
+    }
+  },
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zoft123/gcl-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Zoft123/gcl-vscode/issues"
+  },
+  "homepage": "https://github.com/Zoft123/gcl-vscode#readme"
+}

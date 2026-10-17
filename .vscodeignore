@@ -1,0 +1,5 @@
+test/**
+.vscode/**
+*.vsix
+build_vsix.py
+.gitignore

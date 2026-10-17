@@ -1,0 +1,37 @@
+{
+  "if": {
+    "prefix": "if",
+    "body": ["if (${1:condition}) {", "\t$0", "}"],
+    "description": "if block"
+  },
+  "if / else": {
+    "prefix": "ifelse",
+    "body": ["if (${1:condition}) {", "\t$2", "} else {", "\t$0", "}"],
+    "description": "if / else"
+  },
+  "if / else if / else": {
+    "prefix": "ifelif",
+    "body": ["if (${1:condition}) {", "\t$2", "} else if (${3:condition}) {", "\t$4", "} else {", "\t$0", "}"],
+    "description": "if / else if / else"
+  },
+  "switch": {
+    "prefix": "switch",
+    "body": ["switch (${1:value}) {", "\tcase ${2:0} {", "\t\t$3", "\t}", "\tdefault {", "\t\t$0", "\t}", "}"],
+    "description": "switch with a case and default"
+  },
+  "case": {
+    "prefix": "case",
+    "body": ["case ${1:0} {", "\t$0", "}"],
+    "description": "switch case"
+  },
+  "proc": {
+    "prefix": "proc",
+    "body": ["proc ${1:id} {", "\t$0", "}"],
+    "description": "new proc (ids must stay 1..N without gaps; @procN calls proc N)"
+  },
+  "rule check": {
+    "prefix": "rule",
+    "body": ["(${1:4} == {", "\tcommand [f576c7/COM_svGetRule]", "})"],
+    "description": "expression comparing the current rule (COM_svGetRule)"
+  }
+}
