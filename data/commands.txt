@@ -269,3 +269,8 @@
 0x100FFF3 -> DM_ChangeAmbient_fff3Launch
 0x100FFF4 -> DM_ChangeParallel_fff4Launch
 0x100FFF6 -> DM_ChangeSubParallel_fff6Launch
+0xF4B64 -> ItemMng_SetItemList
+0x2A363C -> WpMng_AddBullet
+0x538FD2 -> WpMng_SetCustom
+0x986321 -> WpMng_AddWeapon
+0xD7CBE5 -> WpMng_SetWeaponList

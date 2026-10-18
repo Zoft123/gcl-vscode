@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.2
+
+- Fixed: a command whose options are followed by a bare value (`!= v`) could not be recompiled
+  ("cannot read value '!='"). Seen in edited MGO2 stage scripts.
+- Bundled `dictionary.txt`: 121 more names (104 command parameters such as `-se_exchg`, `-model_pos`, `-equip`,
+  `-hit_rate`, plus `MAIN_TITLE`, `SUB_TITLE_CP0001`, MGA chara names and a few others), all strings found in the
+  game executables.
+- Bundled `commands.txt`: labels for the MGO2 weapon-select commands: `WpMng_SetWeaponList` (d7cbe5),
+  `WpMng_AddWeapon` (986321), `WpMng_SetCustom` (538fd2), `WpMng_AddBullet` (2a363c), `ItemMng_SetItemList`
+  (0f4b64). These are descriptive names chosen from what the handlers do; no original names survive.
+
 ## 0.1.1
 
 - Encryption follows the disc / PSN title ID in the path: `USRDIR/o` (MGO2) is always encrypted, `USRDIR/mgs`
