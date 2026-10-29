@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.3
+
+- Fixed: options whose names contain a capital letter (`-goalA`, `-flatBattle`, `-respPenalty`, `-timeMax`, `-propM`,
+  ...) decompiled as `-A[a911c7]` even when the name was known, and a hand-written one compiled with the wrong
+  letter. The game stores such options under the name's first capital letter (otherwise its first character): that
+  letter is what handlers look up with `GCL_GetOption`. Checked against every option of the MGO2 stage scripts whose
+  name is known. When several dictionary names share a hash, the stored letter now picks the right one.
+- Bundled `dictionary.txt`: `middle_gray`, `max_ave_lum`, `min_ave_lum`, `force_ave_lum`, `force_ave_lum_blend` and
+  its misspelt twin `force_ave_lum_bledn` (both accepted by the exposure handler), `ae_type`, `upperthreshold`
+  (glare) and `gauss_bloom`; plus the names collected since 0.1.2.
+
 ## 0.1.2
 
 - Fixed: a command whose options are followed by a bare value (`!= v`) could not be recompiled
