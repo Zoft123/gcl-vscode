@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.1.4
+
+- Fixed: `-proc` (and any option named like a keyword) decompiled as `-p[39d643]`; it now prints as `-proc`. Keywords
+  are still never used for bare names, where they would read as syntax.
+- Bundled `dictionary.txt`: 171 option names recovered from the handler code of MGO2, MGS4 and Metal Gear Arcade
+  (every unknown option hash in the MGO2 stage scripts was checked). Among them:
+  - snowstorm (Icebound Inferno): the `min_` / `max_` pairs of `fog_alpha`, `fog_color`, `wind_ratio`, `glare_*`,
+    `colFil_*`, `fog_before_*`, `cloudsky_*`, `gas_alpha`, `ball_alpha`, `before_fog_alpha` and more; `cam_shake_scale`
+  - cloud sky `cloud_way`, `cloud_reptime`; prim lights `uv_scroll_tex`, `uv_scroll_param`, `far_fade_dist`, `add_blend`
+  - power lines `mdnname`, `sklname0`-`sklname6`, `cnpdirname`, `denmass`, `denspringk`, `denwind`, `denrand`,
+    `denairK` and their numbered `den1`/`den2`/`den3` forms
+  - doors `door_model`, `door_motion`, `door_coll`, `body_coll`, `prop_pnt`; glass `mesh_frame`, `mesh_glass`;
+    materials `splash_effect`, `hole_effect`; `portal`, `shadow_buffer_mode`, `noblock`, `whiteout`, `lef`,
+    `proc_cursor`, `proc_start`, `proc_end`, `height_range`
+  - supervisor gun locks `penalty_die`, `penalty_max`, `FFLock_sec`, `GOP_sec`, `GOP_FFLock_sec`, `Liquid_GOP_sec`;
+    elude `dist_xz`, `fall_height_range`, `dir_range`, `catch_*`; camera `trAck`, `PstStand`, `PstSquat`, `PstCrawl`
+  - a few are best guesses that fit the hash but are not confirmed by code: `normal_blend`, `depth_blend`,
+    `recoil_effect`, `camera_rot_x_range`, `rain`, `errcode`, `loop_se`, `ir_dark`, `proc_wall`, `no_rear`,
+    `refraction_rate`, `halo_rate`.
+
 ## 0.1.3
 
 - Fixed: options whose names contain a capital letter (`-goalA`, `-flatBattle`, `-respPenalty`, `-timeMax`, `-propM`,
