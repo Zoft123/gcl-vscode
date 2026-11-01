@@ -2,7 +2,7 @@
   "name": "metal-gear-gcl",
   "displayName": "GCL \u2014 Metal Gear GCX scripts",
   "description": "Decompile, edit and compile GCX scripts (scenerio.gcx) of MGS4, Metal Gear Online 2 and Metal Gear Arcade: highlighting, autocomplete, linting, hovers, go to definition, byte-exact round trip.",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "publisher": "zoft123",
   "license": "MIT",
   "engines": {
@@ -112,12 +112,12 @@
         "gcl.dictionaryPath": {
           "type": "string",
           "default": "",
-          "description": "Your own dictionary.txt for readable names of hashes. Empty: a dictionary.txt next to the project or up to 4 folders above it, then in the workspace folders, else the one bundled with the extension."
+          "description": "Optional preferred dictionary.txt. Its names override the bundled dictionary; bundled names remain available as fallback. Empty: bundled names take priority, with nearby/workspace dictionaries adding missing names."
         },
         "gcl.commandsPath": {
           "type": "string",
           "default": "",
-          "description": "Your own commands.txt (0xHASH -> Name) for command labels shown as [hash/Name]. Empty: searched like the dictionary, else the bundled one."
+          "description": "Optional preferred commands.txt (0xHASH -> Name). Its labels override bundled labels; bundled labels remain available as fallback. Empty: bundled labels take priority, with nearby/workspace files adding missing labels."
         },
         "gcl.mgo2Key": {
           "type": "string",

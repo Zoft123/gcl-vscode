@@ -13,20 +13,21 @@ const fs = require('fs');
 const path = require('path');
 const P = require('../lib/project');
 
-// dictionary.txt / commands.txt: next to the input or up to four folders above it, the current folder, then data/
-function findDefault(name, start) {
+// Bundled name files take priority over auto-discovered local copies; explicit flags override the bundle.
+function nameSources(name, start, explicit) {
+  const files = [explicit, path.join(__dirname, '..', 'data', name)];
   let dir = start ? path.resolve(start) : null;
   if (dir && fs.existsSync(dir) && !fs.statSync(dir).isDirectory()) dir = path.dirname(dir);
   for (let i = 0; dir && i <= 4; i++) {
     const p = path.join(dir, name);
-    if (fs.existsSync(p)) return p;
+    if (fs.existsSync(p)) files.push(p);
     const up = path.dirname(dir); if (up === dir) break; dir = up;
   }
   for (const d of [process.cwd(), path.join(__dirname, '..', 'data')]) {     // then the bundled copy
     const p = path.join(d, name);
-    if (fs.existsSync(p)) return p;
+    if (fs.existsSync(p)) files.push(p);
   }
-  return null;
+  return [...new Set(files.filter(p => p && fs.existsSync(p)))];
 }
 
 function main(argv) {
@@ -42,7 +43,7 @@ function main(argv) {
     else rest.push(a);
   }
   const start = rest.find(a => fs.existsSync(a)) || null;
-  const names = P.loadNames(opts.dict || findDefault('dictionary.txt', start), opts.labels || findDefault('commands.txt', start));
+  const names = P.loadNamesSources(nameSources('dictionary.txt', start, opts.dict), nameSources('commands.txt', start, opts.labels));
   let [mode, ...args] = rest;
   if (mode && mode.toLowerCase().endsWith('.gcx') && fs.existsSync(mode)) { args = [mode]; mode = 'decompile'; }
   if (mode && fs.existsSync(mode) && fs.statSync(mode).isDirectory() && fs.existsSync(path.join(mode, 'script.gcl'))) { args = [mode]; mode = 'compile'; }

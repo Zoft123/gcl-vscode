@@ -82,13 +82,15 @@ Go to definition and find references for procs (`@procN`, `p:procN`) and resourc
 GCL refers to commands, actor types, options and many values by 24-bit hashes. The extension ships with two
 community name lists, so scripts read well from the first decompile:
 
-- **`data/dictionary.txt`** — about 42,000 known strings. A hash is shown as a word (`chara`, `-wp_id`,
+- **`data/dictionary.txt`** — about 48,000 known strings. A hash is shown as a word (`chara`, `-wp_id`,
   `Rule_TDM`) only when that word really hashes to the stored value.
-- **`data/commands.txt`** — handler names for about 270 command hashes, shown as labels: `[f576c7/COM_svGetRule]`.
+- **`data/commands.txt`** — handler names for 287 command hashes, shown as labels: `[f576c7/COM_svGetRule]`.
 
-To use newer or extended lists, put your own `dictionary.txt` / `commands.txt` next to the project (or up to four
-folders above it), or set `gcl.dictionaryPath` / `gcl.commandsPath`. Names only change how hashes are displayed:
-the compiled bytes never depend on them.
+Bundled names take priority by default. A `dictionary.txt` / `commands.txt` beside the project (or up to four
+folders above it) or in the workspace supplements names missing from the bundle, so old local copies cannot hide
+new extension names. To deliberately override bundled names, set `gcl.dictionaryPath` / `gcl.commandsPath`
+(or use CLI `--dict` / `--labels`); bundled fallback names remain available. The GCL output channel lists the
+name-file sources used by Decompile. Names only change how hashes are displayed; compiled bytes do not depend on them.
 
 ### Commands
 | Command | Where |
@@ -236,4 +238,4 @@ name lists only map hashes to readable names.
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/Zoft123/gcl-vscode/blob/HEAD/LICENSE)

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.6
+
+- Fixed name-file lookup: older dictionaries and command lists beside a GCX no longer hide names added by extension updates. Bundled names take priority and local files supplement missing names.
+- Explicit custom name-file settings and CLI flags still override bundled names while keeping bundled fallbacks.
+- Decompile logs show the name-file sources being used.
+- Includes the exact command and dictionary files supplied for 0.1.5.
+
+## 0.1.5
+
+- Updated the bundled command and dictionary name lists only.
+
 ## 0.1.4
 
 - Fixed: `-proc` (and any option named like a keyword) decompiled as `-p[39d643]`; it now prints as `-proc`. Keywords

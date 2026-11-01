@@ -26,37 +26,33 @@ function findUp(dir, file, levels = 5) {
   return null;
 }
 
-function resolveFile(setting, file, docDir) {
-  const v = vscode.workspace.getConfiguration('gcl').get(setting);
-  if (v && fs.existsSync(v)) return v;
-  if (docDir) { const p = findUp(docDir, file); if (p) return p; }
-  for (const f of vscode.workspace.workspaceFolders || []) {
-    const p = path.join(f.uri.fsPath, file);
-    if (fs.existsSync(p)) return p;
-  }
-  const bundled = path.join(__dirname, 'data', file);          // shipped with the extension
-  return fs.existsSync(bundled) ? bundled : null;
+function resolveFiles(setting, file, docDir) {
+  const configured = vscode.workspace.getConfiguration('gcl').get(setting);
+  const files = [configured, path.join(__dirname, 'data', file)];
+  if (docDir) files.push(findUp(docDir, file));
+  for (const folder of vscode.workspace.workspaceFolders || []) files.push(path.join(folder.uri.fsPath, file));
+  return [...new Set(files.filter(p => p && fs.existsSync(p)))];
 }
 
 function namesFor(docDir) {
-  const dict = resolveFile('dictionaryPath', 'dictionary.txt', docDir);
-  const cmds = resolveFile('commandsPath', 'commands.txt', docDir);
-  const key = (dict || '') + '|' + (cmds || '');
-  const mt = (p) => { try { return p ? fs.statSync(p).mtimeMs : 0; } catch (e) { return 0; } };
-  const stamp = mt(dict) + ':' + mt(cmds);
+  const dictPaths = resolveFiles('dictionaryPath', 'dictionary.txt', docDir);
+  const cmdsPaths = resolveFiles('commandsPath', 'commands.txt', docDir);
+  const key = JSON.stringify([dictPaths, cmdsPaths]);
+  const mt = p => { try { return fs.statSync(p).mtimeMs; } catch (e) { return 0; } };
+  const stamp = [...dictPaths, ...cmdsPaths].map(mt).join(':');
   let c = namesCache.get(key);
   if (!c || c.stamp !== stamp) {
-    const names = P.loadNames(dict, cmds);
+    const names = P.loadNamesSources(dictPaths, cmdsPaths);
     const byHashAll = new Map();
-    if (dict) for (const w of fs.readFileSync(dict, 'latin1').split(/\r?\n/)) {
+    for (const dict of dictPaths) for (const w of fs.readFileSync(dict, 'latin1').split(/\r?\n/)) {
       if (!w) continue;
       const h = T.strcode(w);
       if (!byHashAll.has(h)) byHashAll.set(h, []);
-      const a = byHashAll.get(h); if (a.length < 6) a.push(w);
+      const a = byHashAll.get(h); if (a.length < 6 && !a.includes(w)) a.push(w);
     }
     const labelsByName = new Map();
     for (const [h, n] of names.labels) labelsByName.set(n.toLowerCase(), [h, n]);
-    c = { names, byHashAll, labelsByName, stamp, dict, cmds };
+    c = { names, byHashAll, labelsByName, stamp, dict: dictPaths[0], cmds: cmdsPaths[0], dictPaths, cmdsPaths };
     namesCache.set(key, c);
   }
   return c;
@@ -532,6 +528,8 @@ async function cmdDecompile(uri) {
     }
   }
   const N = namesFor(path.dirname(src));
+  log('dictionary sources (highest priority first): ' + N.dictPaths.join(' -> '));
+  log('command sources (highest priority first): ' + N.cmdsPaths.join(' -> '));
   try {
     const key = vscode.workspace.getConfiguration('gcl').get('mgo2Key') || undefined;
     const r = P.decompileToFolder(src, outDir, N.names, key);
