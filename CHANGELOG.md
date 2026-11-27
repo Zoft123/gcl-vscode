@@ -15,6 +15,11 @@
 - **Long `if` / `switch` bodies** (argument lists over 127 bytes) now print as `if … else if … else` / `switch`
   instead of the raw `-i` / `-e` / `-c` / `-d` option form.
 - Option hovers in MGS3 scripts describe letter-only options.
+- Bundled `commands.txt`: 56 MGO1 command handlers traced in the MGO1 stage overlays (the actor each handler
+  creates), e.g. `NewNetworkDummyPlayer`, `NewOnlineGameSupervisor`, `NewOnlineRadarMan`, the `New…Ricochet` set.
+- Bundled `dictionary.txt`: 638 names. 229 from the MGS3 HD port's `manifest.txt` / `bp_assets.txt` asset lists
+  (only names whose hash equals the listed file hash), 402 strings that MGS3 / MGO1 scripts contain in the same file
+  as the hash they name, and 12 MGO1 binary strings that name MGO1 script hashes.
 
 ## 0.1.6
 
