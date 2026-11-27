@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- **Metal Gear Solid: Portable Ops** (PSP) scripts: already supported by the MGS3 dialect (letter-only options;
+  timestamp `0x4531E19C`); all 106 `stage/*/_zarFOLDER/scenerio.gcx` round-trip byte for byte.
+- Bundled `dictionary.txt`: 702 Portable Ops names from the stage resource file names (654 hits vs 0.3 by chance),
+  strings found in the same script as the hash they name (1,049 vs 1.9) and BOOT.BIN strings (13 vs 0.6, all also
+  found by the other two). Portable Ops naming coverage 15.8% -> 20.7% of hash uses.
+
 ## 0.1.8
 
 - **Peace Walker (PS3 HD) scripts**: decompile and compile `scenerio.gcx` from the HD Collection. Peace Walker names
