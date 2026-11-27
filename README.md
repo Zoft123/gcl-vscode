@@ -8,7 +8,8 @@ GCX files are the compiled form of GCL (Game Command Language), the TCL-like scr
 engines.
 Every stage has one: it spawns the actors, sets up the HUD, weapons and loadouts, defines the game rules and wires up
 events. This extension turns a GCX file into readable GCL text, lets you edit it with full editor support, and
-compiles it back into a file the game loads.
+compiles it back into a file the game loads. The texts a script uses (item names, descriptions, menu and message
+lines) become plain strings in `resources.gcl`, so it is also a way to [translate them](#translating-texts).
 
 An unedited project compiles back to the original file **byte for byte**. Edited projects get every size, offset
 and table rebuilt automatically.
@@ -192,6 +193,37 @@ main {
 
 `resources.gcl` holds one resource per line: `index kind content`, where kind is `s` (a string) or `v` (a list of
 values). Add new resources at the end with the next index and refer to them as `$res:N`.
+
+## Translating texts
+
+Many texts the games show are stored in the stage scripts themselves: item and weapon names, descriptions, menu
+entries, prompts and messages. After decompiling, they are ordinary strings in `resources.gcl` (and, for a few, in
+`script.gcl`), so a translation is a text edit followed by a compile:
+
+```gcl
+1 v 1 "KNIFE" "SURVIVAL KNIFE"
+77 s "End Online Mode"
+```
+
+(The first line is from MGS3's item list, a value list with an id and two names; the second is a string resource
+from a Portable Ops stage.)
+
+- **Change only the text between the quotes.** Keep the index, the kind (`s` / `v`) and any numbers.
+- **Keep the string kind.** `"…"` is UTF-8 / ASCII and `e"…"` is EUC-JP (the Japanese strings). Use the kind the
+  game reads at that place: a Japanese string stays `e"…"`.
+- **Length:** texts may get longer or shorter; every size and offset is rebuilt. A string in a `v` list or in
+  `script.gcl` holds at most 254 bytes (the compiler reports `string longer than 254 bytes`); an `s` resource has no
+  such limit. On-screen boxes have their own space, so check long lines in game.
+- **Characters:** the game can only draw characters its font has. Accented letters, for example, are missing from
+  some HUD fonts.
+- **Strings in scripts:** text written directly in `script.gcl` (for example `print "…"` or a command's string
+  argument) is edited the same way.
+- **Not everything is here:** a game also keeps text in other files: layouts (LA2 / LA3 text, editable in
+  [Libla Studio](https://github.com/Zoft123/Libla_Studio)), codec / radio data, and Peace Walker's `.olang` language
+  files.
+
+Compile, put the `.gcx` back in the game folder (keep a backup of the original) and test in game. Encrypted MGO2 files
+are re-encrypted automatically.
 
 ## Settings
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- README: **Translating texts** — how to translate the strings stages keep in `resources.gcl` / `script.gcl`
+  (string kinds, length limits, fonts).
+- A value-list resource with a string over 254 bytes now reports `string longer than 254 bytes` instead of
+  `cannot compile`.
+
 ## 0.1.9
 
 - **Metal Gear Solid: Portable Ops** (PSP) scripts: already supported by the MGS3 dialect (letter-only options;
