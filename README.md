@@ -1,8 +1,8 @@
 # GCL — Metal Gear GCX scripts for VS Code
 
 **Decompile, edit and compile the GCX scripts of Metal Gear Solid 4, Metal Gear Online 2, Metal Gear Arcade,
-Metal Gear Solid 3 / Metal Gear Online (PS2 and the PS3 HD port) and Peace Walker (PS3 HD) — with highlighting,
-autocomplete, linting and a byte-exact round trip.**
+Metal Gear Solid 3 / Metal Gear Online (PS2 and the PS3 HD port), Portable Ops (PSP) and Peace Walker (PS3 HD) — with
+highlighting, autocomplete, linting and a byte-exact round trip.**
 
 GCX files are the compiled form of GCL (Game Command Language), the TCL-like scripting language of the MGS3 and MGS4
 engines.
@@ -46,17 +46,18 @@ file's path) and re-encrypted when you compile. When the path contains a disc or
 The output folder counts too: compiling into a `USRDIR/o` folder always encrypts, compiling into a Blu-ray
 `USRDIR/mgs` folder never does.
 
-### Metal Gear Solid 3 / Metal Gear Online (MGS3 engine)
+### Metal Gear Solid 3 / Metal Gear Online / Portable Ops (MGS3 engine)
 
 MGS3 Subsistence and Metal Gear Online scripts (PS2: the `<hash>.gcx` files in each unpacked stage, e.g.
-`180720.gcx`; PS3 HD port: `mgs3/<lang>/stage/<stage>/cache/00180720.gcx`) open the same way. They are not
+`180720.gcx`; PS3 HD port: `mgs3/<lang>/stage/<stage>/cache/00180720.gcx`) and Metal Gear Solid: Portable Ops scripts
+(PSP: `stage/<stage>/scenerio.gcx` once the stage archive is unpacked) open the same way. They are not
 encrypted. The script dialect is detected from the file:
 
-| | MGS4 / MGO2 / MGA | MGS3 / MGO1 (PS2) | MGS3 HD (PS3) |
-|---|---|---|---|
-| Options | letter + 3-byte name hash (`-wp_id 7`) | letter only (`-W 4204`) | letter only |
-| File start | header timestamp (2008+) | timestamp `0x4371BEDB` (Nov 2005) | magic `LCGB`, then a 2006 timestamp |
-| Decompiled header | `gcx timestamp=…` | `gcx format=mgs3 timestamp=…` | `gcx format=mgs3 magic=LCGB timestamp=…` |
+| | MGS4 / MGO2 / MGA | MGS3 / MGO1 (PS2) | MGS3 HD (PS3) | Portable Ops (PSP) |
+|---|---|---|---|---|
+| Options | letter + 3-byte name hash (`-wp_id 7`) | letter only (`-W 4204`) | letter only | letter only |
+| File start | header timestamp (2008+) | timestamp `0x4371BEDB` (Nov 2005) | magic `LCGB`, then a 2006 timestamp | timestamp `0x4531E19C` (Oct 2006) |
+| Decompiled header | `gcx timestamp=…` | `gcx format=mgs3 timestamp=…` | `gcx format=mgs3 magic=LCGB timestamp=…` | `gcx format=mgs3 timestamp=…` |
 
 ### Peace Walker (PS3 HD)
 

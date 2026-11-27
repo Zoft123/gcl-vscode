@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.9
 
 - **Metal Gear Solid: Portable Ops** (PSP) scripts: already supported by the MGS3 dialect (letter-only options;
   timestamp `0x4531E19C`); all 106 `stage/*/_zarFOLDER/scenerio.gcx` round-trip byte for byte.
