@@ -238,7 +238,7 @@ function current(doc) {
 function good(doc) { const a = current(doc); return a.error ? (lastGood.get(doc.uri.toString()) || a) : a; }
 
 // ---------------------------------------------------------------------------------------------------- tokens at a position
-const TOKEN_AT = /@proc\d+|p:proc\d+|\$res:\d+|\[[0-9a-fA-F]+(?:\/[^\]\s]*)?\](?:\[\d+\])?|-[A-Za-z][A-Za-z0-9_]*(?:\[[0-9a-fA-F]+\])?|%\([^)]*\)|\$[A-Za-z0-9_.@:]+|vec:-?\d+,-?\d+,-?\d+|-?\d+(?::\w+)?|0x[0-9a-fA-F]+(?::\w+)?|[A-Za-z_][A-Za-z0-9_]*(?:\[\d+\])?/;
+const TOKEN_AT = /@proc\d+(?::select)?|p:proc\d+|\$res:\d+|\[[0-9a-fA-F]+(?:\/[^\]\s]*)?\](?:\[\d+\])?|-[A-Za-z][A-Za-z0-9_]*(?:\[[0-9a-fA-F]+\])?|%\([^)]*\)|\$[A-Za-z0-9_.@:]+|vec:-?\d+,-?\d+,-?\d+|-?\d+(?::\w+)?|0x[0-9a-fA-F]+(?::\w+)?|[A-Za-z_][A-Za-z0-9_]*(?:\[\d+\])?/;
 
 function tokenAt(doc, pos) {
   const r = doc.getWordRangeAtPosition(pos, TOKEN_AT);
@@ -283,7 +283,7 @@ function hoverProvider() {
       const s = tk.text; const a = good(doc); const N = a.N;
       const md = new vscode.MarkdownString(); md.supportHtml = false;
       let m;
-      if ((m = /^(?:@proc|p:proc)(\d+)$/.exec(s)) && a.kind === 'script') {
+      if ((m = /^(?:@proc|p:proc)(\d+)(?::select)?$/.exec(s)) && a.kind === 'script') {
         const id = +m[1];
         const prev = procBodyPreview(doc, a, id);
         if (!prev) return new vscode.Hover('**proc ' + id + '** is not defined in this script', tk.range);
@@ -302,6 +302,10 @@ function hoverProvider() {
       if ((m = /^%\(([^)]*)\)$/.exec(s))) {
         md.appendMarkdown('**encoding annotation**\n\n');
         for (const item of m[1].split(',').filter(Boolean)) { const [k, v] = item.split('='); md.appendMarkdown('- `' + item + '`: ' + (ANN_HELP[k] || '?').replace('N', v || '') + '\n'); }
+        return new vscode.Hover(md, tk.range);
+      }
+      if ((m = /^-([A-Za-z])$/.exec(s)) && /^gcx\b[^\n]*\bformat=mgs3\b/m.test(doc.getText())) {
+        md.appendMarkdown('**option** `' + s + '` — letter `' + m[1] + '` (MGS3 / MGO1 options are a letter only, with no name hash)');
         return new vscode.Hover(md, tk.range);
       }
       if ((m = /^-([A-Za-z])([A-Za-z0-9_]*)(?:\[([0-9a-fA-F]+)\])?$/.exec(s)) && !/^-\d/.test(s)) {
@@ -346,7 +350,7 @@ function definitionProvider() {
     provideDefinition(doc, pos) {
       const tk = tokenAt(doc, pos); if (!tk) return null;
       let m;
-      if ((m = /^(?:@proc|p:proc)(\d+)$/.exec(tk.text)) && kindOf(doc) === 'script') {
+      if ((m = /^(?:@proc|p:proc)(\d+)(?::select)?$/.exec(tk.text)) && kindOf(doc) === 'script') {
         const def = good(doc).headers.procs.get(+m[1]);
         return def ? new vscode.Location(doc.uri, new vscode.Range(def.line, def.col, def.line, def.col + def.len)) : null;
       }
@@ -368,7 +372,7 @@ function referenceProvider() {
       const tk = tokenAt(doc, pos); if (!tk) return null;
       const a = good(doc);
       let id = null, m;
-      if ((m = /^(?:@proc|p:proc)(\d+)$/.exec(tk.text))) id = +m[1];
+      if ((m = /^(?:@proc|p:proc)(\d+)(?::select)?$/.exec(tk.text))) id = +m[1];
       else if (/^\d+$/.test(tk.text) && /^proc\b/.test(doc.lineAt(pos.line).text)) id = +tk.text;
       if (id === null) return null;
       const out = a.refs.filter(r => (r.kind === 'call' || r.kind === 'procref') && r.info === id)

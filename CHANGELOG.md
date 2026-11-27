@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.7
+
+- **Metal Gear Solid 3 / Metal Gear Online (MGS3 engine) scripts**: decompile and compile PS2 MGS3 Subsistence and
+  MGO1 GCX files and the PS3 HD port's (which start with the magic `LCGB`). Their options are a letter only
+  (`-W 4204`) instead of letter + name hash. The dialect is detected from the file and written to the project
+  header (`gcx format=mgs3`, plus `magic=LCGB` for the HD port). Checked byte for byte on 75 PS2 files
+  (MGS3 stages and slots, MGO1 stages) and all 612 HD-port files.
+- **Select calls**: `@procN:select` (call id `0x8000 | N`; the game takes the variant of proc N whose select number
+  matches its current selection). Previously printed as `@proc32788` and reported as an undefined proc; the old
+  spelling still compiles.
+- **Unary operators** (`-x`, `!x`, `~x`) now decompile as expressions in MGS4 / MGO2 scripts too, instead of
+  `%(rpn)(…)`: the original compilers emit them with a dummy 0 left operand, which the compiler now also writes.
+- **Long `if` / `switch` bodies** (argument lists over 127 bytes) now print as `if … else if … else` / `switch`
+  instead of the raw `-i` / `-e` / `-c` / `-d` option form.
+- Option hovers in MGS3 scripts describe letter-only options.
+
 ## 0.1.6
 
 - Fixed name-file lookup: older dictionaries and command lists beside a GCX no longer hide names added by extension updates. Bundled names take priority and local files supplement missing names.

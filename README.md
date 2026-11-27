@@ -1,9 +1,11 @@
 # GCL — Metal Gear GCX scripts for VS Code
 
-**Decompile, edit and compile the `scenerio.gcx` scripts of Metal Gear Solid 4, Metal Gear Online 2 and Metal Gear
-Arcade — with highlighting, autocomplete, linting and a byte-exact round trip.**
+**Decompile, edit and compile the GCX scripts of Metal Gear Solid 4, Metal Gear Online 2 and Metal Gear Arcade, and
+of Metal Gear Solid 3 / Metal Gear Online (PS2 and the PS3 HD port) — with highlighting, autocomplete, linting and a
+byte-exact round trip.**
 
-GCX files are the compiled form of GCL (Game Command Language), the TCL-like scripting language of the MGS4 engine.
+GCX files are the compiled form of GCL (Game Command Language), the TCL-like scripting language of the MGS3 and MGS4
+engines.
 Every stage has one: it spawns the actors, sets up the HUD, weapons and loadouts, defines the game rules and wires up
 events. This extension turns a GCX file into readable GCL text, lets you edit it with full editor support, and
 compiles it back into a file the game loads.
@@ -43,6 +45,22 @@ file's path) and re-encrypted when you compile. When the path contains a disc or
 
 The output folder counts too: compiling into a `USRDIR/o` folder always encrypts, compiling into a Blu-ray
 `USRDIR/mgs` folder never does.
+
+### Metal Gear Solid 3 / Metal Gear Online (MGS3 engine)
+
+MGS3 Subsistence and Metal Gear Online scripts (PS2: the `<hash>.gcx` files in each unpacked stage, e.g.
+`180720.gcx`; PS3 HD port: `mgs3/<lang>/stage/<stage>/cache/00180720.gcx`) open the same way. They are not
+encrypted. The script dialect is detected from the file:
+
+| | MGS4 / MGO2 / MGA | MGS3 / MGO1 (PS2) | MGS3 HD (PS3) |
+|---|---|---|---|
+| Options | letter + 3-byte name hash (`-wp_id 7`) | letter only (`-W 4204`) | letter only |
+| File start | header timestamp (2008+) | timestamp `0x4371BEDB` (Nov 2005) | magic `LCGB`, then a 2006 timestamp |
+| Decompiled header | `gcx timestamp=…` | `gcx format=mgs3 timestamp=…` | `gcx format=mgs3 magic=LCGB timestamp=…` |
+
+The header timestamp only picks which dialect to try first; a file that does not parse in that one is read in the
+other. Everything else (procs, commands, variables, expressions, resources) is the same in both engines, and the
+same text syntax is used. MGS3 scripts also use *select calls* (`@proc20:select`, see below).
 
 ## Features
 
@@ -142,6 +160,7 @@ main {
 | `if (…) { } else if (…) { } else { }` | control flow, as the original MGS source wrote it |
 | `switch (…) { case X { } default { } }` | switch |
 | `@proc12 1 2` | call proc 12 with arguments |
+| `@proc20:select` | call the variant of proc 20 for the game's current selection: from entry 20 the game takes the first proc whose select number (`flags >> 4`) matches (MGS3 / MGO1) |
 | `p:proc12` | pass proc 12 by reference (for example `-init_hud p:proc32`) |
 | `word` / `[c2c7a0]` / `[ce2d24/NewSky]` | a 24-bit hash: a dictionary word, a raw hash, or a hash with a display label (labels are ignored when compiling) |
 | `80`, `300:s32`, `5:u16` | numbers get the original compiler's encoding; a `:type` suffix keeps an explicit one |
@@ -149,7 +168,7 @@ main {
 | `$res:12` | resource 12 from `resources.gcl` |
 | `$status`, `$arg1`, `$local0` | last result, proc argument, proc-local variable |
 | `$s32@link:a9c`, `$bit@var:20.b3` | a game variable: type, region (`var`, `link`, `local`), offset, bit |
-| `(($arg1 + 2) * 70000)` | an expression, fully parenthesised |
+| `(($arg1 + 2) * 70000)`, `(! $s32@link:8)` | an expression, fully parenthesised (unary `-` `!` `~` compile with the dummy 0 left operand the original compilers use) |
 | `%(short=1)`, `%(w=1)`, `%(noend)` | quirks of the original compiler, kept so files rebuild byte for byte — leave them in place |
 
 `resources.gcl` holds one resource per line: `index kind content`, where kind is `s` (a string) or `v` (a list of
@@ -194,7 +213,7 @@ with an MD5-based checksum keyed by the stage folder.
 
 ```
 extension.js            VS Code integration (diagnostics, completion, hover, navigation, commands)
-lib/gcx.js              GCX container and bytecode: parse and rebuild
+lib/gcx.js              GCX container and bytecode: parse and rebuild (MGS4 and MGS3 dialects)
 lib/gcltext.js          GCL text: decompiler (emitter), parser and compiler
 lib/project.js          project folders, names, MGO2 decryption
 lib/mgo2crypt.js        MGO2 stage-file encryption
@@ -209,6 +228,7 @@ build_vsix.py           packages the extension as a .vsix
 - **Round-trip test:** `node bin/gcx.js verify path/to/*.gcx` — every file must report `OK`.
 - **Provider tests:** decompile a script, then `node test/test-extension.js path/to/project` runs diagnostics,
   quick fixes, hovers, navigation and completion against it.
+- **Dialect tests:** `node test/test-mgs3.js` (no game files needed).
 - **Run from source:** open this folder in VS Code and press `F5` to start an Extension Development Host.
 
 ## Roadmap

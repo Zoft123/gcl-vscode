@@ -7,6 +7,7 @@
 //   gcx compile projdir [out.gcx]        compile (re-encrypted when the project came from an encrypted MGO2 file)
 //   gcx verify a.gcx [b.gcx ...]         decompile + compile in memory and compare bytes
 // Options: --dict FILE, --labels FILE (commands.txt), --key stage/NAME (MGO2), --no-encrypt
+// MGS3 / MGO1 scripts (PS2 and the PS3 HD port, magic LCGB) are detected from the file and use the same commands.
 // Inside a known MGS4 / MGO disc or PSN title folder, the disc ID decides encryption (USRDIR/o always encrypted;
 // USRDIR/mgs encrypted on NPEB02182 / NPJB00698 / NPUB31633, plain on the Blu-ray discs).
 const fs = require('fs');

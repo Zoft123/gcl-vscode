@@ -1,8 +1,8 @@
 {
   "name": "metal-gear-gcl",
   "displayName": "GCL \u2014 Metal Gear GCX scripts",
-  "description": "Decompile, edit and compile GCX scripts (scenerio.gcx) of MGS4, Metal Gear Online 2 and Metal Gear Arcade: highlighting, autocomplete, linting, hovers, go to definition, byte-exact round trip.",
-  "version": "0.1.6",
+  "description": "Decompile, edit and compile GCX scripts of MGS4, Metal Gear Online 2, Metal Gear Arcade and MGS3 / Metal Gear Online (PS2, PS3 HD): highlighting, autocomplete, linting, hovers, go to definition, byte-exact round trip.",
+  "version": "0.1.7",
   "publisher": "zoft123",
   "license": "MIT",
   "engines": {
@@ -19,6 +19,8 @@
     "metal gear",
     "mgs4",
     "mgo2",
+    "mgs3",
+    "mgo",
     "scenerio"
   ],
   "main": "./extension.js",
