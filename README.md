@@ -266,7 +266,7 @@ Issues and pull requests are welcome.
 - `dictionary.txt` and `commands.txt` are community name lists that started with Jayveer's
   [Gcx](https://github.com/Jayveer/Gcx) decompiler (MIT) and have been extended since.
 - MGO2 decryption follows the method implemented by **HavenStudio2** of the MGO2 revival community (shared with
-  [LA2 Studio](https://github.com/Zoft123/LA2_Studio)).
+  [Libla Studio](https://github.com/Zoft123/Libla_Studio), formerly LA2 Studio).
 
 ## Legal
 
