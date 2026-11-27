@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.8
+
+- **Peace Walker (PS3 HD) scripts**: decompile and compile `scenerio.gcx` from the HD Collection. Peace Walker names
+  its procs: the file has a sorted table of proc name hashes after the proc table, and calls / proc references hold
+  the 3-byte name hash. Detected from that table; the project header says `gcx format=pw`, each proc id carries its
+  name (`proc 12:1=[0bf5e8]`), and `@procN` / `p:procN` keep working (compiled to the name hash, table in name
+  order). Checked byte for byte on all 91 scripts.
+- Bundled `dictionary.txt`: 1,126 Peace Walker names: resource file names from the stage folders, strings found in the
+  same script as the hash they name, and EBOOT strings matching option names (with the right option letter) or
+  string ids (identifier-shaped only). Matches of EBOOT strings against proc names were at chance level and are not
+  included.
+
 ## 0.1.7
 
 - **Metal Gear Solid 3 / Metal Gear Online (MGS3 engine) scripts**: decompile and compile PS2 MGS3 Subsistence and

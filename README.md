@@ -1,8 +1,8 @@
 # GCL — Metal Gear GCX scripts for VS Code
 
-**Decompile, edit and compile the GCX scripts of Metal Gear Solid 4, Metal Gear Online 2 and Metal Gear Arcade, and
-of Metal Gear Solid 3 / Metal Gear Online (PS2 and the PS3 HD port) — with highlighting, autocomplete, linting and a
-byte-exact round trip.**
+**Decompile, edit and compile the GCX scripts of Metal Gear Solid 4, Metal Gear Online 2, Metal Gear Arcade,
+Metal Gear Solid 3 / Metal Gear Online (PS2 and the PS3 HD port) and Peace Walker (PS3 HD) — with highlighting,
+autocomplete, linting and a byte-exact round trip.**
 
 GCX files are the compiled form of GCL (Game Command Language), the TCL-like scripting language of the MGS3 and MGS4
 engines.
@@ -57,6 +57,23 @@ encrypted. The script dialect is detected from the file:
 | Options | letter + 3-byte name hash (`-wp_id 7`) | letter only (`-W 4204`) | letter only |
 | File start | header timestamp (2008+) | timestamp `0x4371BEDB` (Nov 2005) | magic `LCGB`, then a 2006 timestamp |
 | Decompiled header | `gcx timestamp=…` | `gcx format=mgs3 timestamp=…` | `gcx format=mgs3 magic=LCGB timestamp=…` |
+
+### Peace Walker (PS3 HD)
+
+Peace Walker's `stage/<name>/scenerio.gcx` files (HD Collection, `NPUB30611/USRDIR/MLG/disc0_rel/stage`) are plain
+and use the MGS4 dialect with one change: **procs have names**. After the proc table the file lists one 24-bit name
+hash per proc (sorted), and calls and proc references hold that name hash instead of a proc number. The decompiled
+header is `gcx format=pw …`, every proc id carries its name, and calls still read `@procN`:
+
+```gcl
+proc 12:1=[0bf5e8] {
+    @proc40 1
+}
+```
+
+When compiling, `@procN` / `p:procN` become proc N's name hash and the proc table is written in name order, as the
+game expects (it searches it). `@proc[0bf5e8]` / `p:proc[0bf5e8]` name a hash directly. Checked byte for byte on all
+91 Peace Walker scripts.
 
 The header timestamp only picks which dialect to try first; a file that does not parse in that one is read in the
 other. Everything else (procs, commands, variables, expressions, resources) is the same in both engines, and the
@@ -160,6 +177,7 @@ main {
 | `if (…) { } else if (…) { } else { }` | control flow, as the original MGS source wrote it |
 | `switch (…) { case X { } default { } }` | switch |
 | `@proc12 1 2` | call proc 12 with arguments |
+| `proc 12=[0bf5e8] { … }` | Peace Walker: proc 12, whose name hash is `0bf5e8` (a dictionary word also works) |
 | `@proc20:select` | call the variant of proc 20 for the game's current selection: from entry 20 the game takes the first proc whose select number (`flags >> 4`) matches (MGS3 / MGO1) |
 | `p:proc12` | pass proc 12 by reference (for example `-init_hud p:proc32`) |
 | `word` / `[c2c7a0]` / `[ce2d24/NewSky]` | a 24-bit hash: a dictionary word, a raw hash, or a hash with a display label (labels are ignored when compiling) |

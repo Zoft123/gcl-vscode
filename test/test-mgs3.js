@@ -1,5 +1,6 @@
 // Run: node test/test-mgs3.js   (no game files needed)
-// MGS3 / MGO1 dialect (letter-only options, "LCGB" HD magic, format detection) and the dialect-independent
+// MGS3 / MGO1 dialect (letter-only options, "LCGB" HD magic, format detection), the Peace Walker dialect (named
+// procs), and the dialect-independent
 // expression / if fixes: unary operators take a dummy 0 left operand; long if bodies keep the else sugar.
 'use strict';
 const assert = require('assert');
@@ -103,6 +104,29 @@ test('select calls: @procN:select is id 0x8000 | N; the older @proc32788 spellin
   assert.ok(/@proc2:select/.test(text2));
   const old = T.compileText(src('@proc32770'), '', names).build();
   assert.ok(bytesEqual(old, g.build()));
+});
+
+test('Peace Walker: named procs, calls and p:proc compile to name hashes, table in name order', () => {
+  const src = 'gcx format=pw timestamp=0x4e62456f seed=0x00000000\n\nproc 1=[c00000] {\n    @proc2 1\n}\n\nproc 2:1=[0a0000] {\n' +
+    '    command [123456] -init_hud p:proc1\n}\n\nmain {\n    @proc1\n    @proc[0a0000]\n}\n';
+  const g = T.compileText(src, '', names);
+  const bytes = g.build();
+  assert.deepStrictEqual(g.procNames, [0x0a0000, 0xc00000], 'sorted by name hash');
+  const back = Gcx.parse(bytes);
+  assert.strictEqual(back.format, 'pw', 'detected from the name table');
+  assert.ok(bytesEqual(back.build(), bytes));
+  const call = back.main[2][0];
+  assert.deepStrictEqual([call[0], call[2], call[5]], ['call', 0xc00000, 'hash']);
+  const [text2] = T.decompile(back, names);
+  assert.ok(/^proc 1:1=\[0a0000\] \{/m.test(text2) && /^proc 2=\[c00000\] \{/m.test(text2), 'ids follow name order');
+  assert.ok(/p:proc2/.test(text2) && /@proc1 1/.test(text2), 'references print as the ids of the named procs');
+  assert.ok(bytesEqual(T.compileText(text2, '', names).build(), bytes), 'text round trip');
+});
+
+test('Peace Walker: every proc needs a name; unknown @procN is an error', () => {
+  assert.throws(() => T.compileText('gcx format=pw timestamp=0x4e62456f seed=0x00000000\nproc 1 {\n}\nmain {\n}\n', '', names), /need a name/);
+  assert.throws(() => T.compileText('gcx format=pw timestamp=0x4e62456f seed=0x00000000\nproc 1=[000001] {\n}\nmain {\n    @proc2\n}\n', '', names), /no proc 2/);
+  assert.throws(() => T.compileText('gcx timestamp=0x49d307e4 seed=0x00000000\nproc 1=[000001] {\n}\nmain {\n}\n', '', names), /only used in Peace Walker/);
 });
 
 console.log(passed + ' tests passed');

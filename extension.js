@@ -85,11 +85,12 @@ function headerScan(text) {
   const procs = new Map(); const order = [];
   const lines = text.split('\n');
   for (let i = 0; i < lines.length; i++) {
-    let m = /^proc((?:\s+\d+(?::\d+)?)+)/.exec(lines[i]);
+    let m = /^proc((?:\s+\d+(?::\d+)?(?:=\S+)?)+)/.exec(lines[i]);
     if (m) {
-      const ids = []; const re = /(\d+)(?::(\d+))?/g; let x; let base = 4;
+      // ids: 12, 12:1, or (Peace Walker) 12=[0c746b] / 12:1=name
+      const ids = []; const re = /(\s+)(\d+)(?::(\d+))?(?:=\S+)?/g; let x; let base = 4;
       const part = m[1];
-      while ((x = re.exec(part))) ids.push({ id: +x[1], flags: +(x[2] || 0), col: base + x.index, len: x[0].length });
+      while ((x = re.exec(part))) ids.push({ id: +x[2], flags: +(x[3] || 0), col: base + x.index + x[1].length, len: x[0].length - x[1].length });
       order.push({ line: i, ids, main: false });
       for (const d of ids) procs.set(d.id, { line: i, col: d.col, len: d.len, flags: d.flags });
       continue;
